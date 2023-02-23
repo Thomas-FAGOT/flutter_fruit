@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/remote_service.dart';
 
+import '../models/fruit.dart';
 import '../models/posts.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Fruit>? fruits;
   List<Post>? posts;
   var isLoaded = false;
 
@@ -21,12 +23,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   getData() async {
+    fruits = await RemoteService().getFruits();
+    if (fruits != null) {
+      setState(() {
+        isLoaded = true;
+        print(isLoaded);
+      });
+    }
+    /*
     posts = await RemoteService().getPosts();
     if (posts != null) {
       setState(() {
         isLoaded = true;
       });
     }
+    */
   }
 
   @override
@@ -41,7 +52,7 @@ class _HomePageState extends State<HomePage> {
             child: CircularProgressIndicator(),
           ),
           child: ListView.builder(
-              itemCount: posts?.length,
+              itemCount: fruits?.length,
               itemBuilder: (context, index) {
                 return Container(
                     padding: const EdgeInsets.all(16),
@@ -61,14 +72,14 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              posts![index].title,
+                              fruits![index].name,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              posts![index].body,
+                              fruits![index].family,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                             ),

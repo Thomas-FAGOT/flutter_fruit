@@ -1,0 +1,21 @@
+GET https://www.fruityvice.com/api/fruit/all
+###
+GET https://www.fruityvice.com/api/fruit/apple
+###
+PUT https://www.fruityvice.com/api/fruit
+User-Agent: rest-client
+Accept-Language: en-GB,en-US;q=0.8,en;q=0.6,zh-CN;q=0.4
+Content-Type: application/json
+{
+    "genus": "Fragaria",
+    "name": "Strawberry",
+    "family": "Rosaceae",
+    "order": "Rosales",
+    "nutritions": {
+        "carbohydrates": 5.5,
+        "protein": 0,
+        "fat": 0.4,
+        "calories": 29,
+        "sugar": 5.4
+    }
+}
