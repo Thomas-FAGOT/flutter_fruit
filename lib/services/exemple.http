@@ -1,3 +1,5 @@
 GET https://www.fruityvice.com/api/fruit/all
 ###
 GET https://api.chucknorris.io/jokes/random
+###
+GET https://api.open-meteo.com/v1/forecast?latitude=48.11&longitude=-1.62&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&timezone=auto

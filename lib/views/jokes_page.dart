@@ -5,45 +5,23 @@ import 'package:flutter_application_1/services/remote_service.dart';
 import '../models/fruit.dart';
 import '../models/posts.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class JokesPage extends StatefulWidget {
+  const JokesPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<JokesPage> createState() => _JokesPage();
 }
 
-class _HomePageState extends State<HomePage> {
+class _JokesPage extends State<JokesPage> {
   late Joke joke;
   var isLoaded = false;
-
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
+  bool myNewButton = false;
+  String myText = "";
 
   @override
   void initState() {
     super.initState();
     getData();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   getData() async {
@@ -52,6 +30,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         isLoaded = true;
         print(isLoaded);
+        print(joke.value);
       });
     }
   }
@@ -59,6 +38,31 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              child: Text("Vous voulez une blague ?"),
+              style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.black),
+              ),
+              onPressed: () async {
+                getData();
+                setState(() {
+                  myNewButton = true;
+                  myText = joke.value;
+                });
+              },
+            ),
+            Text(
+              myText,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+      /*
       appBar: AppBar(
         title: const Text("API"),
       ),
@@ -123,7 +127,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
-      ),
+      ),*/
     );
   }
 }

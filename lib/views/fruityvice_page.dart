@@ -16,34 +16,10 @@ class _FruityvicePage extends State<FruityvicePage> {
   List<Fruit>? fruits;
   var isLoaded = false;
 
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
     getData();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   getData() async {
@@ -57,7 +33,13 @@ class _FruityvicePage extends State<FruityvicePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Text("Fruityvice"),
+      ),
+
+      /*
       appBar: AppBar(
         title: const Text("FRUITYVICE"),
       ),
@@ -122,7 +104,7 @@ class _FruityvicePage extends State<FruityvicePage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
-      ),
+      ), */
     );
   }
 }

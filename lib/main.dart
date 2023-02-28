@@ -2,10 +2,21 @@
 
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/views/fruityvice_page.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:page_transition/page_transition.dart';
+import 'routes/routes.dart';
+import 'views/jokes_page.dart';
 
-import 'views/home_page.dart';
+void main() {
+  runApp(GetMaterialApp(
+    debugShowCheckedModeBanner: false,
+    initialRoute: AppPage.getnavbar(),
+    getPages: AppPage.routes,
+  ));
+}
 
+/*
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -59,30 +70,9 @@ class SplashScreen extends StatelessWidget {
           ),
         ],
       ),
-      nextScreen: const HomePage(),
+      nextScreen: const FruityvicePage(),
       pageTransitionType: PageTransitionType.rightToLeft,
     );
   }
-}
-
-/*
-class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.orange, Colors.purple])),
-        ),
-      ),
-    );
-  }
-  
 }
 */
