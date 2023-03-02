@@ -19,7 +19,7 @@ class _FruityvicePage extends State<FruityvicePage> {
   @override
   void initState() {
     super.initState();
-    getData();
+    //getData();
   }
 
   getData() async {
