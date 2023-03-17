@@ -16,29 +16,53 @@ class _FruityvicePage extends State<FruityvicePage> {
   List<Fruit>? fruits;
   var isLoaded = false;
 
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    //getData();
+    getData("all");
   }
 
-  getData() async {
-    fruits = (await RemoteService().getFruits());
+  getData(String value) async {
+    fruits = (await RemoteService().getFruits(value));
+    print(fruits);
     if (fruits != null) {
       setState(() {
         isLoaded = true;
       });
+      print(
+          "------------------------------------------Fruits------------------------------------------");
     }
+  }
+
+  _onSearchTextChanged(value) {
+    getData(value);
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Text("Fruityvice"),
-      ),
-
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: TextField(
+            controller: _searchController,
+            onChanged: _onSearchTextChanged,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+            decoration: InputDecoration(
+              hintText: 'Recherche...',
+              hintStyle: TextStyle(color: Colors.grey),
+              iconColor: Colors.white,
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.search, color: Colors.grey),
+            ),
+          ),
+        ),
+        body: Center());
+  }
+}
       /*
       appBar: AppBar(
         title: const Text("FRUITYVICE"),
@@ -105,6 +129,3 @@ class _FruityvicePage extends State<FruityvicePage> {
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
       ), */
-    );
-  }
-}

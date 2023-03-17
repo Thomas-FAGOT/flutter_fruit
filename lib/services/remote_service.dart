@@ -21,12 +21,14 @@ class RemoteService {
     }
   }
 
-  Future<List<Fruit>?> getFruits() async {
+  Future<List<Fruit>?> getFruits(String value) async {
     var client = http.Client();
 
-    var uri = Uri.parse('https://www.fruityvice.com/api/fruit/all');
+    var uri = Uri.parse('https://www.fruityvice.com/api/fruit/$value');
+    print(uri);
     var response = await client.get(uri);
     if (response.statusCode == 200) {
+      print("200");
       var json = response.body;
       return fruitFromJson(json);
     }

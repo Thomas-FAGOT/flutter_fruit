@@ -43,7 +43,7 @@ class _JokesPage extends State<JokesPage> {
         child: Column(
           children: [
             ElevatedButton(
-              child: Text("Vous voulez une blague ?"),
+              child: Text("Joke"),
               style: const ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll(Colors.black),
               ),
