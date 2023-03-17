@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/joke.dart';
 import 'package:flutter_application_1/services/remote_service.dart';
-
 import '../models/fruit.dart';
-import '../models/posts.dart';
 
 class FruityvicePage extends StatefulWidget {
   const FruityvicePage({super.key});
@@ -26,13 +23,10 @@ class _FruityvicePage extends State<FruityvicePage> {
 
   getData(String value) async {
     fruits = (await RemoteService().getFruits(value));
-    print(fruits);
     if (fruits != null) {
       setState(() {
         isLoaded = true;
       });
-      print(
-          "------------------------------------------Fruits------------------------------------------");
     }
   }
 
@@ -48,10 +42,10 @@ class _FruityvicePage extends State<FruityvicePage> {
           title: TextField(
             controller: _searchController,
             onChanged: _onSearchTextChanged,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
             ),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Recherche...',
               hintStyle: TextStyle(color: Colors.grey),
               iconColor: Colors.white,
@@ -60,7 +54,7 @@ class _FruityvicePage extends State<FruityvicePage> {
             ),
           ),
         ),
-        body: Center());
+        body: const Center());
   }
 }
       /*
@@ -115,17 +109,4 @@ class _FruityvicePage extends State<FruityvicePage> {
                     ],
                   ));
             }),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.nature), label: 'fruityvice'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.sports_martial_arts),
-              label: 'Chuck Noris jokes'),
-          BottomNavigationBarItem(icon: Icon(Icons.sunny), label: 'Météo'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
-      ), */
+      ),*/

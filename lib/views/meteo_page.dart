@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/localisation.dart';
 import 'package:flutter_application_1/models/meteo.dart';
-import 'package:flutter_application_1/models/ville.dart';
+import 'package:flutter_application_1/models/villeV2.dart';
 import 'package:flutter_application_1/services/remote_service.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_icons/weather_icons.dart';
@@ -14,45 +13,36 @@ class MeteoPage extends StatefulWidget {
 }
 
 class _MeteoPage extends State<MeteoPage> {
+  // ------------ Objets ------------ //
+  late List<VilleV2> villes;
   late Meteo meteo;
-  late Localisation localisation;
-  List<Ville>? villes;
 
-  // Variables Nav Bar
-  final TextEditingController _searchController = TextEditingController();
-
+  // ------------ SetState ------------ //
   var isLoaded = false;
-  var villesIsLoaded = false;
+
+  // ------------ Tableau température prevision ------------ //
   var listTemp = List<String>.filled(7, "");
+
+  // ------------ ville ------------ //
+  String ville = "Rennes";
+
+  // ------------ Controller pour la barre de recherche ------------ //
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    getData("Brest");
+    getData();
   }
 
-  getData(String ville) async {
-    villes = (await RemoteService().getVille(ville))!;
-    if (villes != null) {
-      villesIsLoaded = true;
-    }
-    print("Météo");
+  getData() async {
+    villes = (await RemoteService().getVilleV2(ville))!;
     meteo = (await RemoteService()
         .getMeteo(double.parse(villes![0].lat), double.parse(villes![0].lon)))!;
-    if (meteo != null) {
+    getTempPrev();
+    if (villes != null) {
       setState(() {
         isLoaded = true;
-        getTempPrev();
-      });
-    }
-    localisation = (await RemoteService().getLocalisation(
-        double.parse(villes![0].lat), double.parse(villes![0].lon)))!;
-    print("Localisation");
-    print(localisation);
-    if (localisation != null) {
-      setState(() {
-        isLoaded = true;
-        print(localisation.results[0].formatted);
       });
     }
   }
@@ -66,8 +56,18 @@ class _MeteoPage extends State<MeteoPage> {
     }
   }
 
+  String WeatherCode(int code) {
+    String temps = "";
+    if (meteo.currentWeather.weathercode < 45) {
+      temps = "sunny";
+    }
+
+    return temps;
+  }
+
   _onSearchTextChanged(String value) async {
-    getData(value);
+    ville = value;
+    getData();
   }
 
   @override
@@ -91,10 +91,14 @@ class _MeteoPage extends State<MeteoPage> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: FutureBuilder<List<Ville>?>(
-        future: RemoteService().getVille("Brest"),
-        builder: (BuildContext context, AsyncSnapshot<List<Ville>?> snapshot) {
-          if (snapshot.hasData) {
+      body: FutureBuilder(
+        future: RemoteService().getVilleV2(ville),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('ERREUR : ${snapshot.error}');
+          } else {
             return ListView(
               scrollDirection: Axis.horizontal,
               children: <Widget>[
@@ -104,7 +108,7 @@ class _MeteoPage extends State<MeteoPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(localisation.results[0].formatted),
+                        Text(villes[0].displayName),
                         Row(
                           children: [
                             const Text("Latitude : "),
@@ -157,65 +161,53 @@ class _MeteoPage extends State<MeteoPage> {
                     Row(
                       children: [
                         for (var i = 0; i < listTemp.length; i++)
-                          Container(
-                            child: Column(
-                              children: [
-                                // Date ( Label + Value)
-                                Row(
-                                  children: [
-                                    Text(DateFormat('dd/MM/yyyy').format(
-                                        DateTime.parse(
-                                            meteo.daily.time[i].toString()))),
-                                  ],
-                                ),
-                                // Température ( Label + Value)
-                                Row(
-                                  children: [
-                                    const Text("Température : "),
-                                    Text(listTemp[i]),
-                                    const Text("°C")
-                                  ],
-                                ),
-                                // Temps ( Label + Value)
-                                Row(
-                                  children: [
-                                    if (meteo.daily.weathercode[i] < 45)
-                                      const Icon(WeatherIcons.day_sunny)
-                                    else if (meteo.daily.weathercode[i] >= 45 &&
-                                        meteo.daily.weathercode[i] < 61)
-                                      const Icon(WeatherIcons.cloud)
-                                    else if (meteo.daily.weathercode[i] >= 61 &&
-                                            meteo.daily.weathercode[i] < 71 ||
-                                        meteo.daily.weathercode[i] >= 80 &&
-                                            meteo.daily.weathercode[i] < 85)
-                                      const Icon(WeatherIcons.rain)
-                                    else if (meteo.daily.weathercode[i] >= 71 &&
-                                            meteo.daily.weathercode[i] < 77 ||
-                                        meteo.daily.weathercode[i] >= 85 &&
-                                            meteo.daily.weathercode[i] < 95)
-                                      const Icon(WeatherIcons.snow)
-                                    else if (meteo.daily.weathercode[i] >= 95)
-                                      const Icon(WeatherIcons.thunderstorm)
-                                  ],
-                                ),
-                                //[for (var i in listTemp) Text(i.toString())],
-                              ],
-                            ),
-                            /* Doit être fait 7 fois */
+                          Column(
+                            children: [
+                              // Date ( Label + Value)
+                              Row(
+                                children: [
+                                  Text(DateFormat('dd/MM/yyyy').format(
+                                      DateTime.parse(
+                                          meteo.daily.time[i].toString()))),
+                                ],
+                              ),
+                              // Température ( Label + Value)
+                              Row(
+                                children: [
+                                  const Text("Température : "),
+                                  Text(listTemp[i]),
+                                  const Text("°C")
+                                ],
+                              ),
+                              // Temps ( Label + Value)
+                              Row(
+                                children: [
+                                  if (meteo.daily.weathercode[i] < 45)
+                                    const Icon(WeatherIcons.day_sunny)
+                                  else if (meteo.daily.weathercode[i] >= 45 &&
+                                      meteo.daily.weathercode[i] < 61)
+                                    const Icon(WeatherIcons.cloud)
+                                  else if (meteo.daily.weathercode[i] >= 61 &&
+                                          meteo.daily.weathercode[i] < 71 ||
+                                      meteo.daily.weathercode[i] >= 80 &&
+                                          meteo.daily.weathercode[i] < 85)
+                                    const Icon(WeatherIcons.rain)
+                                  else if (meteo.daily.weathercode[i] >= 71 &&
+                                          meteo.daily.weathercode[i] < 77 ||
+                                      meteo.daily.weathercode[i] >= 85 &&
+                                          meteo.daily.weathercode[i] < 95)
+                                    const Icon(WeatherIcons.snow)
+                                  else if (meteo.daily.weathercode[i] >= 95)
+                                    const Icon(WeatherIcons.thunderstorm)
+                                ],
+                              ),
+                            ],
                           ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
             );
           }
           ;
@@ -224,175 +216,3 @@ class _MeteoPage extends State<MeteoPage> {
     );
   }
 }
-
-          /*
-child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          for (var i = 0; i < listTemp.length; i++)
-            Container(
-              child: Column(
-                children: [
-                  // Date ( Label + Value)
-                  Row(
-                    children: [
-                      Text(DateFormat('dd/MM/yyyy').format(
-                          DateTime.parse(meteo.daily.time[i].toString()))),
-                    ],
-                  ),
-                  // Température ( Label + Value)
-                  Row(
-                    children: [
-                      Text("Température : "),
-                      Text(listTemp[i]),
-                      Text("°C")
-                    ],
-                  ),
-                  // Temps ( Label + Value)
-                  Row(
-                    children: [
-                      if (meteo.daily.weathercode[i] < 45)
-                        Icon(WeatherIcons.day_sunny)
-                      else if (meteo.daily.weathercode[i] >= 45 &&
-                          meteo.daily.weathercode[i] < 61)
-                        Icon(WeatherIcons.cloud)
-                      else if (meteo.daily.weathercode[i] >= 61 &&
-                              meteo.daily.weathercode[i] < 71 ||
-                          meteo.daily.weathercode[i] >= 80 &&
-                              meteo.daily.weathercode[i] < 85)
-                        Icon(WeatherIcons.rain)
-                      else if (meteo.daily.weathercode[i] >= 71 &&
-                              meteo.daily.weathercode[i] < 77 ||
-                          meteo.daily.weathercode[i] >= 85 &&
-                              meteo.daily.weathercode[i] < 95)
-                        Icon(WeatherIcons.snow)
-                      else if (meteo.daily.weathercode[i] >= 95)
-                        Icon(WeatherIcons.thunderstorm)
-                    ],
-                  ),
-                  //[for (var i in listTemp) Text(i.toString())],
-                ],
-              ),
-              /* Doit être fait 7 fois */
-            ),
-        ],
-      )
-
-          --------------------------------------------------------------------
-        child: Column(
-          children: [
-            Expanded(
-              child: Column(
-                children: [],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: Column(
-                  children: [
-                    Text(localisation.results[0].formatted),
-                    Row(
-                      children: [
-                        Text("Latitude : "),
-                        Text(meteo.latitude.toString()),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("Longitude : "),
-                        Text(meteo.longitude.toString()),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("Temperature : "),
-                        Text(meteo.currentWeather.temperature.toString()),
-                        Text("°C"),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("Vitesse du vent : "),
-                        Text(meteo.currentWeather.windspeed.toString()),
-                        Text("KmH"),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        if (meteo.currentWeather.weathercode < 45)
-                          Icon(WeatherIcons.day_sunny)
-                        else if (meteo.currentWeather.weathercode >= 45 &&
-                            meteo.currentWeather.weathercode < 61)
-                          Icon(WeatherIcons.cloud)
-                        else if (meteo.currentWeather.weathercode >= 61 &&
-                                meteo.currentWeather.weathercode < 71 ||
-                            meteo.currentWeather.weathercode >= 80 &&
-                                meteo.currentWeather.weathercode < 85)
-                          Icon(WeatherIcons.rain)
-                        else if (meteo.currentWeather.weathercode >= 71 &&
-                                meteo.currentWeather.weathercode < 77 ||
-                            meteo.currentWeather.weathercode >= 85 &&
-                                meteo.currentWeather.weathercode < 95)
-                          Icon(WeatherIcons.snow)
-                        else if (meteo.currentWeather.weathercode >= 95)
-                          Icon(WeatherIcons.thunderstorm)
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            /*
-            Expanded(
-              child: Container(
-                child: Row(
-                  children: [
-                    /* Doit être fait 7 fois */
-                    for (var i = 0; i < listTemp.length; i++)
-                      Column(children: [
-                        // Date ( Label + Value)
-                        Row(
-                          children: [
-                            Text(DateFormat('dd/MM/yyyy').format(DateTime.parse(
-                                meteo.daily.time[i].toString()))),
-                          ],
-                        ),
-                        // Température ( Label + Value)
-                        Row(
-                          children: [
-                            Text("Température : "),
-                            Text(listTemp[i]),
-                            Text("°C")
-                          ],
-                        ),
-                        // Temps ( Label + Value)
-                        Row(
-                          children: [
-                            if (meteo.daily.weathercode[i] < 45)
-                              Icon(WeatherIcons.day_sunny)
-                            else if (meteo.daily.weathercode[i] >= 45 &&
-                                meteo.daily.weathercode[i] < 61)
-                              Icon(WeatherIcons.cloud)
-                            else if (meteo.daily.weathercode[i] >= 61 &&
-                                    meteo.daily.weathercode[i] < 71 ||
-                                meteo.daily.weathercode[i] >= 80 &&
-                                    meteo.daily.weathercode[i] < 85)
-                              Icon(WeatherIcons.rain)
-                            else if (meteo.daily.weathercode[i] >= 71 &&
-                                    meteo.daily.weathercode[i] < 77 ||
-                                meteo.daily.weathercode[i] >= 85 &&
-                                    meteo.daily.weathercode[i] < 95)
-                              Icon(WeatherIcons.snow)
-                            else if (meteo.daily.weathercode[i] >= 95)
-                              Icon(WeatherIcons.thunderstorm)
-                          ],
-                        ),
-                        //[for (var i in listTemp) Text(i.toString())],
-                      ]),
-                    /* Doit être fait 7 fois */
-                  ],
-                ),
-              ),
-            )*/
-          ],
-        ),*/
