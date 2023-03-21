@@ -36,25 +36,42 @@ class _FruityvicePage extends State<FruityvicePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: TextField(
-            controller: _searchController,
-            onChanged: _onSearchTextChanged,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-            decoration: const InputDecoration(
-              hintText: 'Recherche...',
-              hintStyle: TextStyle(color: Colors.grey),
-              iconColor: Colors.white,
-              border: InputBorder.none,
-              prefixIcon: Icon(Icons.search, color: Colors.grey),
+    return Container(
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/fruityvice.jpg"),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black12, Colors.black87])),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            title: TextField(
+              controller: _searchController,
+              onChanged: _onSearchTextChanged,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+              decoration: const InputDecoration(
+                hintText: 'Recherche...',
+                hintStyle: TextStyle(color: Colors.grey),
+                iconColor: Colors.white,
+                border: InputBorder.none,
+                prefixIcon: Icon(Icons.search, color: Colors.grey),
+              ),
             ),
           ),
         ),
-        body: const Center());
+      ),
+    );
   }
 }
       /*

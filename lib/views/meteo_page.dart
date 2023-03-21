@@ -17,11 +17,11 @@ class _MeteoPage extends State<MeteoPage> {
   late List<VilleV2> villes;
   late Meteo meteo;
 
-  // ------------ SetState ------------ //
-  var isLoaded = false;
-
   // ------------ Tableau température prevision ------------ //
   var listTemp = List<String>.filled(7, "");
+
+  // ------------ SetState ------------ //
+  var isLoaded = false;
 
   // ------------ ville ------------ //
   String ville = "Rennes";
@@ -35,11 +35,15 @@ class _MeteoPage extends State<MeteoPage> {
     getData();
   }
 
+  /// Appel de l'api pour récuper les coordonnées (lat et lon) de la ville demandé
+  /// Appel de l'api pour récuper la météo de la ville passé en paramètre
+  /// setState pour mettre à jour l'affichage
   getData() async {
     villes = (await RemoteService().getVilleV2(ville))!;
     meteo = (await RemoteService()
         .getMeteo(double.parse(villes![0].lat), double.parse(villes![0].lon)))!;
     getTempPrev();
+    // ignore: unnecessary_null_comparison
     if (villes != null) {
       setState(() {
         isLoaded = true;
@@ -47,6 +51,8 @@ class _MeteoPage extends State<MeteoPage> {
     }
   }
 
+  /// l'api météo renvoie la température min et max pour les prochains jours
+  /// Cette méthode permet de faire la moyenne des températures et de les récuperer dans un tableau
   getTempPrev() {
     for (var i = 0; i < meteo.daily.temperature2MMax.length; i++) {
       listTemp[i] =
@@ -56,15 +62,25 @@ class _MeteoPage extends State<MeteoPage> {
     }
   }
 
-  String WeatherCode(int code) {
+  /// l'api météo renvoie un code permettant de savoir quel temps il fera
+  /// Cette méthode permet de remplacer le code par un String correspondant au temps qu'il fera
+  String _weatherCode(int code) {
     String temps = "";
-    if (meteo.currentWeather.weathercode < 45) {
+    if (code < 45) {
       temps = "sunny";
+    } else if (code >= 45 && code < 61) {
+      temps = "cloud";
+    } else if (code >= 61 && code < 71 || code >= 80 && code < 85) {
+      temps = "rain";
+    } else if (code >= 71 && code < 77 || code >= 85 && code < 95) {
+      temps = "snow";
+    } else if (code >= 95) {
+      temps = "thunderstorm";
     }
-
     return temps;
   }
 
+  /// Cette méthode permet de modifier la variable vile et d'appeler la méthode getData qui fera les appels aux API
   _onSearchTextChanged(String value) async {
     ville = value;
     getData();
@@ -72,146 +88,237 @@ class _MeteoPage extends State<MeteoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: TextField(
-          controller: _searchController,
-          onChanged: _onSearchTextChanged,
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-          decoration: const InputDecoration(
-            hintText: 'Recherche...',
-            hintStyle: TextStyle(color: Colors.grey),
-            iconColor: Colors.white,
-            border: InputBorder.none,
-            prefixIcon: Icon(Icons.search, color: Colors.grey),
-          ),
+    return Container(
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/meteo.jpg"),
+          fit: BoxFit.cover,
         ),
       ),
-      backgroundColor: Colors.white,
-      body: FutureBuilder(
-        future: RemoteService().getVilleV2(ville),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('ERREUR : ${snapshot.error}');
-          } else {
-            return ListView(
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+      child: Container(
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black12, Colors.black87])),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            title: TextField(
+              controller: _searchController,
+              onChanged: _onSearchTextChanged,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+              decoration: const InputDecoration(
+                hintText: 'Recherche...',
+                hintStyle: TextStyle(color: Colors.grey),
+                iconColor: Colors.white,
+                border: InputBorder.none,
+                prefixIcon: Icon(Icons.search, color: Colors.grey),
+              ),
+            ),
+          ),
+          body: FutureBuilder(
+            future: RemoteService().getVilleV2(ville),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('ERREUR : ${snapshot.error}');
+              } else {
+                return ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(villes[0].displayName),
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Latitude : "),
-                            Text(meteo.latitude.toString()),
+                            Text(
+                              villes[0].displayName,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Latitude : ",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  meteo.latitude.toString(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Longitude : ",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  meteo.longitude.toString(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Temperature : ",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  meteo.currentWeather.temperature.toString(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                const Text(
+                                  "°C",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Vitesse du vent : ",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  meteo.currentWeather.windspeed.toString(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                const Text(
+                                  "KmH",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                if (_weatherCode(
+                                        meteo.currentWeather.weathercode) ==
+                                    "sunny")
+                                  const Icon(
+                                    WeatherIcons.day_sunny,
+                                    color: Colors.white,
+                                  )
+                                else if (_weatherCode(
+                                        meteo.currentWeather.weathercode) ==
+                                    "cloud")
+                                  const Icon(
+                                    WeatherIcons.cloud,
+                                    color: Colors.white,
+                                  )
+                                else if (_weatherCode(
+                                        meteo.currentWeather.weathercode) ==
+                                    "rain")
+                                  const Icon(
+                                    WeatherIcons.rain,
+                                    color: Colors.white,
+                                  )
+                                else if (_weatherCode(
+                                        meteo.currentWeather.weathercode) ==
+                                    "snow")
+                                  const Icon(
+                                    WeatherIcons.snow,
+                                    color: Colors.white,
+                                  )
+                                else if (_weatherCode(
+                                        meteo.currentWeather.weathercode) ==
+                                    "thunderstorm")
+                                  const Icon(
+                                    WeatherIcons.thunderstorm,
+                                    color: Colors.white,
+                                  )
+                              ],
+                            ),
                           ],
                         ),
                         Row(
                           children: [
-                            const Text("Longitude : "),
-                            Text(meteo.longitude.toString()),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const Text("Temperature : "),
-                            Text(meteo.currentWeather.temperature.toString()),
-                            const Text("°C"),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            const Text("Vitesse du vent : "),
-                            Text(meteo.currentWeather.windspeed.toString()),
-                            const Text("KmH"),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            if (meteo.currentWeather.weathercode < 45)
-                              const Icon(WeatherIcons.day_sunny)
-                            else if (meteo.currentWeather.weathercode >= 45 &&
-                                meteo.currentWeather.weathercode < 61)
-                              const Icon(WeatherIcons.cloud)
-                            else if (meteo.currentWeather.weathercode >= 61 &&
-                                    meteo.currentWeather.weathercode < 71 ||
-                                meteo.currentWeather.weathercode >= 80 &&
-                                    meteo.currentWeather.weathercode < 85)
-                              const Icon(WeatherIcons.rain)
-                            else if (meteo.currentWeather.weathercode >= 71 &&
-                                    meteo.currentWeather.weathercode < 77 ||
-                                meteo.currentWeather.weathercode >= 85 &&
-                                    meteo.currentWeather.weathercode < 95)
-                              const Icon(WeatherIcons.snow)
-                            else if (meteo.currentWeather.weathercode >= 95)
-                              const Icon(WeatherIcons.thunderstorm)
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        for (var i = 0; i < listTemp.length; i++)
-                          Column(
-                            children: [
-                              // Date ( Label + Value)
-                              Row(
+                            for (var i = 0; i < listTemp.length; i++)
+                              Column(
                                 children: [
-                                  Text(DateFormat('dd/MM/yyyy').format(
-                                      DateTime.parse(
-                                          meteo.daily.time[i].toString()))),
+                                  // Date ( Label + Value)
+                                  Row(
+                                    children: [
+                                      Text(
+                                        DateFormat('dd/MM/yyyy').format(
+                                            DateTime.parse(meteo.daily.time[i]
+                                                .toString())),
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                  // Température ( Label + Value)
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Température : ",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      Text(
+                                        listTemp[i],
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                      const Text(
+                                        "°C",
+                                        style: TextStyle(color: Colors.white),
+                                      )
+                                    ],
+                                  ),
+                                  // Temps ( Label + Value)
+                                  Row(
+                                    children: [
+                                      if (_weatherCode(
+                                              meteo.daily.weathercode[i]) ==
+                                          "sunny")
+                                        const Icon(
+                                          WeatherIcons.day_sunny,
+                                          color: Colors.white,
+                                        )
+                                      else if (_weatherCode(
+                                              meteo.daily.weathercode[i]) ==
+                                          "cloud")
+                                        const Icon(WeatherIcons.cloud,
+                                            color: Colors.white)
+                                      else if (_weatherCode(
+                                              meteo.daily.weathercode[i]) ==
+                                          "rain")
+                                        const Icon(WeatherIcons.rain,
+                                            color: Colors.white)
+                                      else if (_weatherCode(
+                                              meteo.daily.weathercode[i]) ==
+                                          "snow")
+                                        const Icon(WeatherIcons.snow,
+                                            color: Colors.white)
+                                      else if (_weatherCode(
+                                              meteo.daily.weathercode[i]) ==
+                                          "thunderstorm")
+                                        const Icon(WeatherIcons.thunderstorm,
+                                            color: Colors.white)
+                                    ],
+                                  ),
                                 ],
                               ),
-                              // Température ( Label + Value)
-                              Row(
-                                children: [
-                                  const Text("Température : "),
-                                  Text(listTemp[i]),
-                                  const Text("°C")
-                                ],
-                              ),
-                              // Temps ( Label + Value)
-                              Row(
-                                children: [
-                                  if (meteo.daily.weathercode[i] < 45)
-                                    const Icon(WeatherIcons.day_sunny)
-                                  else if (meteo.daily.weathercode[i] >= 45 &&
-                                      meteo.daily.weathercode[i] < 61)
-                                    const Icon(WeatherIcons.cloud)
-                                  else if (meteo.daily.weathercode[i] >= 61 &&
-                                          meteo.daily.weathercode[i] < 71 ||
-                                      meteo.daily.weathercode[i] >= 80 &&
-                                          meteo.daily.weathercode[i] < 85)
-                                    const Icon(WeatherIcons.rain)
-                                  else if (meteo.daily.weathercode[i] >= 71 &&
-                                          meteo.daily.weathercode[i] < 77 ||
-                                      meteo.daily.weathercode[i] >= 85 &&
-                                          meteo.daily.weathercode[i] < 95)
-                                    const Icon(WeatherIcons.snow)
-                                  else if (meteo.daily.weathercode[i] >= 95)
-                                    const Icon(WeatherIcons.thunderstorm)
-                                ],
-                              ),
-                            ],
-                          ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
-                ),
-              ],
-            );
-          }
-          ;
-        },
+                );
+              }
+              ;
+            },
+          ),
+        ),
       ),
     );
   }
