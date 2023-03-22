@@ -41,7 +41,7 @@ class _MeteoPage extends State<MeteoPage> {
   getData() async {
     villes = (await RemoteService().getVilleV2(ville))!;
     meteo = (await RemoteService()
-        .getMeteo(double.parse(villes![0].lat), double.parse(villes![0].lon)))!;
+        .getMeteo(double.parse(villes[0].lat), double.parse(villes[0].lon)))!;
     getTempPrev();
     // ignore: unnecessary_null_comparison
     if (villes != null) {
@@ -105,7 +105,7 @@ class _MeteoPage extends State<MeteoPage> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: const Color.fromRGBO(0, 0, 0, 0.6),
             title: TextField(
               controller: _searchController,
               onChanged: _onSearchTextChanged,
@@ -113,7 +113,7 @@ class _MeteoPage extends State<MeteoPage> {
                 color: Colors.white,
               ),
               decoration: const InputDecoration(
-                hintText: 'Recherche...',
+                hintText: 'Recherche une ville',
                 hintStyle: TextStyle(color: Colors.grey),
                 iconColor: Colors.white,
                 border: InputBorder.none,
@@ -125,189 +125,194 @@ class _MeteoPage extends State<MeteoPage> {
             future: RemoteService().getVilleV2(ville),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               } else if (snapshot.hasError) {
                 return Text('ERREUR : ${snapshot.error}');
               } else {
                 return ListView(
-                  scrollDirection: Axis.horizontal,
+                  //scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 245, 0, 0)),
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               villes[0].displayName,
                               style: const TextStyle(color: Colors.white),
                             ),
-                            Row(
-                              children: [
-                                const Text(
-                                  "Latitude : ",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  meteo.latitude.toString(),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  "Longitude : ",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  meteo.longitude.toString(),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  "Temperature : ",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  meteo.currentWeather.temperature.toString(),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                const Text(
-                                  "°C",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  "Vitesse du vent : ",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  meteo.currentWeather.windspeed.toString(),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                const Text(
-                                  "KmH",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                if (_weatherCode(
-                                        meteo.currentWeather.weathercode) ==
-                                    "sunny")
-                                  const Icon(
-                                    WeatherIcons.day_sunny,
-                                    color: Colors.white,
-                                  )
-                                else if (_weatherCode(
-                                        meteo.currentWeather.weathercode) ==
-                                    "cloud")
-                                  const Icon(
-                                    WeatherIcons.cloud,
-                                    color: Colors.white,
-                                  )
-                                else if (_weatherCode(
-                                        meteo.currentWeather.weathercode) ==
-                                    "rain")
-                                  const Icon(
-                                    WeatherIcons.rain,
-                                    color: Colors.white,
-                                  )
-                                else if (_weatherCode(
-                                        meteo.currentWeather.weathercode) ==
-                                    "snow")
-                                  const Icon(
-                                    WeatherIcons.snow,
-                                    color: Colors.white,
-                                  )
-                                else if (_weatherCode(
-                                        meteo.currentWeather.weathercode) ==
-                                    "thunderstorm")
-                                  const Icon(
-                                    WeatherIcons.thunderstorm,
-                                    color: Colors.white,
-                                  )
-                              ],
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            for (var i = 0; i < listTemp.length; i++)
-                              Column(
+                            if (_weatherCode(
+                                    meteo.currentWeather.weathercode) ==
+                                "sunny")
+                              const Icon(
+                                WeatherIcons.day_sunny,
+                                color: Colors.white,
+                                size: 110,
+                              )
+                            else if (_weatherCode(
+                                    meteo.currentWeather.weathercode) ==
+                                "cloud")
+                              const Icon(
+                                WeatherIcons.cloud,
+                                color: Colors.white,
+                                size: 110,
+                              )
+                            else if (_weatherCode(
+                                    meteo.currentWeather.weathercode) ==
+                                "rain")
+                              const Icon(
+                                WeatherIcons.rain,
+                                color: Colors.white,
+                                size: 110,
+                              )
+                            else if (_weatherCode(
+                                    meteo.currentWeather.weathercode) ==
+                                "snow")
+                              const Icon(
+                                WeatherIcons.snow,
+                                color: Colors.white,
+                                size: 110,
+                              )
+                            else if (_weatherCode(
+                                    meteo.currentWeather.weathercode) ==
+                                "thunderstorm")
+                              const Icon(
+                                WeatherIcons.thunderstorm,
+                                color: Colors.white,
+                                size: 110,
+                              ),
+                            const Padding(
+                                padding: EdgeInsets.fromLTRB(0, 30, 0, 0)),
+                            SizedBox(
+                              width: 200,
+                              height: 25,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // Date ( Label + Value)
-                                  Row(
-                                    children: [
-                                      Text(
-                                        DateFormat('dd/MM/yyyy').format(
-                                            DateTime.parse(meteo.daily.time[i]
-                                                .toString())),
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                    ],
+                                  Text(
+                                    meteo.currentWeather.temperature.toString(),
+                                    style: const TextStyle(color: Colors.white),
                                   ),
-                                  // Température ( Label + Value)
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        "Température : ",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      Text(
-                                        listTemp[i],
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                      const Text(
-                                        "°C",
-                                        style: TextStyle(color: Colors.white),
-                                      )
-                                    ],
+                                  const Text(
+                                    "°C",
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                  // Temps ( Label + Value)
-                                  Row(
-                                    children: [
-                                      if (_weatherCode(
-                                              meteo.daily.weathercode[i]) ==
-                                          "sunny")
-                                        const Icon(
-                                          WeatherIcons.day_sunny,
-                                          color: Colors.white,
-                                        )
-                                      else if (_weatherCode(
-                                              meteo.daily.weathercode[i]) ==
-                                          "cloud")
-                                        const Icon(WeatherIcons.cloud,
-                                            color: Colors.white)
-                                      else if (_weatherCode(
-                                              meteo.daily.weathercode[i]) ==
-                                          "rain")
-                                        const Icon(WeatherIcons.rain,
-                                            color: Colors.white)
-                                      else if (_weatherCode(
-                                              meteo.daily.weathercode[i]) ==
-                                          "snow")
-                                        const Icon(WeatherIcons.snow,
-                                            color: Colors.white)
-                                      else if (_weatherCode(
-                                              meteo.daily.weathercode[i]) ==
-                                          "thunderstorm")
-                                        const Icon(WeatherIcons.thunderstorm,
-                                            color: Colors.white)
-                                    ],
+                                  const Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(50, 0, 0, 0)),
+                                  Text(
+                                    meteo.currentWeather.windspeed.toString(),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  const Text(
+                                    "KmH",
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ],
                               ),
+                            ),
+                          ],
+                        ),
+                        const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 40, 0, 40)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 290,
+                              height: 145,
+                              color: const Color.fromRGBO(0, 0, 0, 0.6),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: listTemp.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              DateFormat('dd/MM/yyyy').format(
+                                                  DateTime.parse(meteo
+                                                      .daily.time[index]
+                                                      .toString())),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                          ],
+                                        ),
+                                        if (_weatherCode(meteo
+                                                .daily.weathercode[index]) ==
+                                            "sunny")
+                                          const Icon(
+                                            WeatherIcons.day_sunny,
+                                            color: Colors.white,
+                                            size: 55,
+                                          )
+                                        else if (_weatherCode(meteo
+                                                .daily.weathercode[index]) ==
+                                            "cloud")
+                                          const Icon(
+                                            WeatherIcons.cloud,
+                                            color: Colors.white,
+                                            size: 55,
+                                          )
+                                        else if (_weatherCode(meteo
+                                                .daily.weathercode[index]) ==
+                                            "rain")
+                                          const Icon(
+                                            WeatherIcons.rain,
+                                            color: Colors.white,
+                                            size: 55,
+                                          )
+                                        else if (_weatherCode(meteo
+                                                .daily.weathercode[index]) ==
+                                            "snow")
+                                          const Icon(
+                                            WeatherIcons.snow,
+                                            color: Colors.white,
+                                            size: 55,
+                                          )
+                                        else if (_weatherCode(meteo
+                                                .daily.weathercode[index]) ==
+                                            "thunderstorm")
+                                          const Icon(
+                                            WeatherIcons.thunderstorm,
+                                            color: Colors.white,
+                                            size: 55,
+                                          ),
+                                        const Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 30, 0, 0)),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              listTemp[index],
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            const Text(
+                                              "°C",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -315,7 +320,6 @@ class _MeteoPage extends State<MeteoPage> {
                   ],
                 );
               }
-              ;
             },
           ),
         ),

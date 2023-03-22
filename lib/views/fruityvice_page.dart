@@ -53,7 +53,7 @@ class _FruityvicePage extends State<FruityvicePage> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: Colors.black,
+            backgroundColor: const Color.fromRGBO(0, 0, 0, 0.6),
             title: TextField(
               controller: _searchController,
               onChanged: _onSearchTextChanged,
@@ -68,6 +68,24 @@ class _FruityvicePage extends State<FruityvicePage> {
                 prefixIcon: Icon(Icons.search, color: Colors.grey),
               ),
             ),
+          ),
+          body: Column(
+            children: [
+              TextField(
+                controller: _searchController,
+                onChanged: _onSearchTextChanged,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'Recherche...',
+                  hintStyle: TextStyle(color: Colors.grey),
+                  iconColor: Colors.white,
+                  border: InputBorder.none,
+                  prefixIcon: Icon(Icons.search, color: Colors.grey),
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -45,6 +45,7 @@ class _JokesPage extends State<JokesPage> {
           body: Center(
             child: Column(
               children: [
+                const Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0)),
                 ElevatedButton(
                   onPressed: () async {
                     getData();
@@ -54,11 +55,12 @@ class _JokesPage extends State<JokesPage> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 47, 46, 46),
+                      backgroundColor: const Color.fromRGBO(0, 0, 0, 0.6),
                       shape: const CircleBorder(),
                       fixedSize: const Size(110, 110)),
                   child: const Text("Joke"),
                 ),
+                const Padding(padding: EdgeInsets.fromLTRB(0, 190, 0, 0)),
                 Container(
                   decoration:
                       const BoxDecoration(color: Color.fromRGBO(0, 0, 0, 0.6)),

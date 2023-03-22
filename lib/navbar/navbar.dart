@@ -20,11 +20,12 @@ class _NavBarState extends State<NavBar> {
       return Scaffold(
         body: IndexedStack(
           index: controller.tabIndex,
-          children: [FruityvicePage(), JokesPage(), MeteoPage()],
+          children: const [FruityvicePage(), JokesPage(), MeteoPage()],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.grey.shade300,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: const Color.fromARGB(255, 47, 46, 46),
+          backgroundColor: const Color.fromRGBO(72, 79, 81, 1),
           currentIndex: controller.tabIndex,
           onTap: controller.changeTabIndex,
           items: [
