@@ -33,8 +33,8 @@ App météo :
     - Une API prenant en paramètre des coordonnées et renvoyant les informations météo correspondant aux coordonnées
 
 Architecture du projet
-    main.dart                                       -> lancer le projet
-    views/jokes_page.dart & views/meteo_page.dart   -> Partie front du projet (organisation du widgets, intéraction widget back, ...)
-    service/remote_service.dart                     -> Partie back du projet (appels des API)
-    routes/* navbar/* controller/                   -> La navigation entre les deux pages
-    models/*                                        -> Définition des objets (joke, ville et meteo) pour stocker les appels des API
+    - main.dart                                       -> lancer le projet
+    - views/jokes_page.dart & views/meteo_page.dart   -> Partie front du projet (organisation du widgets, intéraction widget back, ...)
+    - service/remote_service.dart                     -> Partie back du projet (appels des API)
+    - routes/* navbar/* controller/                   -> La navigation entre les deux pages
+    - models/*                                        -> Définition des objets (joke, ville et meteo) pour stocker les appels des API
