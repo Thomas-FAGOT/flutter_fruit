@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/meteo.dart';
-import 'package:flutter_application_1/models/villeV2.dart';
+import 'package:flutter_application_1/models/ville.dart';
 import 'package:flutter_application_1/services/remote_service.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_icons/weather_icons.dart';
@@ -14,7 +14,7 @@ class MeteoPage extends StatefulWidget {
 
 class _MeteoPage extends State<MeteoPage> {
   // ------------ Objets ------------ //
-  late List<VilleV2> villes;
+  late List<Ville> villes;
   late Meteo meteo;
 
   // ------------ Tableau température prevision ------------ //
@@ -39,7 +39,7 @@ class _MeteoPage extends State<MeteoPage> {
   /// Appel de l'api pour récuper la météo de la ville passé en paramètre
   /// setState pour mettre à jour l'affichage
   getData() async {
-    villes = (await RemoteService().getVilleV2(ville))!;
+    villes = (await RemoteService().getVille(ville))!;
     meteo = (await RemoteService()
         .getMeteo(double.parse(villes[0].lat), double.parse(villes[0].lon)))!;
     getTempPrev();
@@ -122,7 +122,7 @@ class _MeteoPage extends State<MeteoPage> {
             ),
           ),
           body: FutureBuilder(
-            future: RemoteService().getVilleV2(ville),
+            future: RemoteService().getVille(ville),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(

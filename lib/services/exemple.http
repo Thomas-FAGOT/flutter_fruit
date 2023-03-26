@@ -1,4 +1,4 @@
-GET https://www.fruityvice.com/api/fruit/all
+GET https://www.fruityvice.com/api/fruit/apple
 ###
 GET https://api.chucknorris.io/jokes/random
 ###

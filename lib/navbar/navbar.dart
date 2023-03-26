@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/controller.dart';
-import 'package:flutter_application_1/views/fruityvice_page.dart';
 import 'package:flutter_application_1/views/jokes_page.dart';
 import 'package:flutter_application_1/views/meteo_page.dart';
 import 'package:get/get.dart';
@@ -20,7 +19,7 @@ class _NavBarState extends State<NavBar> {
       return Scaffold(
         body: IndexedStack(
           index: controller.tabIndex,
-          children: const [FruityvicePage(), JokesPage(), MeteoPage()],
+          children: const [JokesPage(), MeteoPage()],
         ),
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: Colors.white,
@@ -29,7 +28,6 @@ class _NavBarState extends State<NavBar> {
           currentIndex: controller.tabIndex,
           onTap: controller.changeTabIndex,
           items: [
-            _bottombarItem(Icons.nature, "Fruityvice"),
             _bottombarItem(Icons.sports_martial_arts, "Jokes"),
             _bottombarItem(Icons.sunny, "Météo"),
           ],

@@ -1,22 +1,9 @@
 import 'package:flutter_application_1/models/meteo.dart';
-import 'package:flutter_application_1/models/villeV2.dart';
+import 'package:flutter_application_1/models/ville.dart';
 import 'package:http/http.dart' as http;
-
-import '../models/fruit.dart';
 import '../models/joke.dart';
 
 class RemoteService {
-  Future<List<Fruit>?> getFruits(String value) async {
-    var client = http.Client();
-
-    var uri = Uri.parse('https://www.fruityvice.com/api/fruit/$value');
-    var response = await client.get(uri);
-    if (response.statusCode == 200) {
-      var json = response.body;
-      return fruitFromJson(json);
-    }
-  }
-
   Future<Joke?> getJoke() async {
     var client = http.Client();
 
@@ -30,14 +17,14 @@ class RemoteService {
     }
   }
 
-  Future<List<VilleV2>?> getVilleV2(String ville) async {
+  Future<List<Ville>?> getVille(String ville) async {
     var client = http.Client();
     var uri = Uri.parse(
         'https://nominatim.openstreetmap.org/search?q=$ville&dedupe=0&accept-language=fr&countrycodes=fr&limit=5&format=json');
     var response = await client.get(uri);
     if (response.statusCode == 200) {
       var json = response.body;
-      return villeV2FromJson(json);
+      return villeFromJson(json);
     } else {
       return null;
     }
