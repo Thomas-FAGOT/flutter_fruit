@@ -18,11 +18,11 @@ Pour faire fonctionner cette application, il faut :
 4. Choisir son device (la programmation a été réalisée sur Chrome mis au format device avec l'élément inspecter.)
 5. Lancer l'application avec le bouton "run without debugging" en haut à droite
 
-App blague Chuck Norris
+App blague Chuck Norris : 
     Sur cette page vous trouverez un bouton qui en cliquant dessus vous affiche une blague sur Chuck nuris en anglais.
     Cette application m'a permis de comprendre comment fonctionne les appels d'API et comment afficher des informations sur le front
 
-App météo
+App météo : 
     Cette page est la deuxième partie du projet, il va contenir une barre de recherche pour la ville de notre choix.
     La météo du jour pour la ville recherchée
     La météo prévisionnelle des 7 prochains jours pour la ville recherchée
