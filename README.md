@@ -1,8 +1,8 @@
 Ceci est un projet flutter réalisé dans le cadre d'un cours sur les langages Dart et Flutter
 
-L'objectif de cette application est de parcourir différentes fonctionnalités que nous offre Flutter
+L'objectif de cette projet est de parcourir différentes fonctionnalités que nous offre Flutter
 
-Dans cette application, vous retrouverez les fonctionnalités suivantes :
+Dans cette projet, vous retrouverez les fonctionnalités suivantes :
 - Une nav bar
 - Une bar de recherche (appelant une API à chaque changement de valeur)
 - Un bouton clickable (appelant une API)
