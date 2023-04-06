@@ -40,11 +40,10 @@ class _MeteoPage extends State<MeteoPage> {
   /// setState pour mettre à jour l'affichage
   getData() async {
     villes = (await RemoteService().getVille(ville))!;
-    meteo = (await RemoteService()
-        .getMeteo(double.parse(villes[0].lat), double.parse(villes[0].lon)))!;
-    getTempPrev();
-    // ignore: unnecessary_null_comparison
     if (villes != null) {
+      meteo = (await RemoteService()
+          .getMeteo(double.parse(villes[0].lat), double.parse(villes[0].lon)))!;
+      getTempPrev();
       setState(() {
         isLoaded = true;
       });
